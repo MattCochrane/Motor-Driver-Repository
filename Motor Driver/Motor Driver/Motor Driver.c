@@ -26,6 +26,8 @@
 void motor_setup(void)
 {
         DDRB |= (1<<PB0)|(1<<PB1)|(1<<PB2)|(1<<PB3);
+		
+		PORTB |= (1<<PB0)|(1<<PB1)|(1<<PB2)|(1<<PB3);
 }
 
 //different modes are required for motors, this function is used to select how to do the different modes

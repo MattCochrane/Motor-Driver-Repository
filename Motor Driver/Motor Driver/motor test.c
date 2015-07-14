@@ -9,19 +9,35 @@
 int main(void)
 {
 	motor_setup();
-	_delay_ms(500);
-	left_motor_CW();
+	_delay_ms(2000);
+	
+	
+	/*left_motor_CW();
 	_delay_ms(1000);
 	left_motor_stop();
 	_delay_ms(1000);
 	left_motor_CCW();
 	_delay_ms(1000);
+	left_motor_stop();
+	_delay_ms(1000);
 	right_motor_CW();
-	_delay_ms(2000);
+	_delay_ms(1000);
 	right_motor_stop();
-	_delay_ms(2000);
+	_delay_ms(1000);
 	right_motor_CCW();
-	_delay_ms(2000);
+	_delay_ms(1000);
+	//left_motor_stop();
+	right_motor_stop();
+	*/
+	left_motor_CW();
+	right_motor_CW();
+	_delay_ms(3000);
+	left_motor_stop();
+	right_motor_stop();
+	_delay_ms(1000);
+	left_motor_CCW();
+	right_motor_CCW();
+	_delay_ms(1000);
 	left_motor_stop();
 	right_motor_stop();
 }
