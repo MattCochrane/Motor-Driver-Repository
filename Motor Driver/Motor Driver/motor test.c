@@ -11,27 +11,26 @@
 #define REV 2
 #define BRAKE 3
 
-#define OAleft 180
-#define OBright 190
+#define OA_left 180
+#define OB_right 190
 
 
 int main(void)
 {
-	_delay_ms(500);
 	motor_setup();
 	timersetup();
 	_delay_ms(1000);
 	
-	double dist;
+	//double dist;
 	
 	//Strategy A
-	/*
+	
 	motor_set_mode(FWD);
 	_delay_ms(5000);
 	motor_set_mode(BRAKE);
-	*/
 	
 	
+	/*
 	for(int i=0; i<7; i++){
 		motor_set_mode(FWD);
 		_delay_ms(500);
@@ -40,7 +39,7 @@ int main(void)
 	}
 	
 	motor_set_mode(BRAKE);
-	
+	*/
 }
 //TEST 1
 	/*left_motor_CW();

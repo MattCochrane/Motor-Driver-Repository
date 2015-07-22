@@ -21,8 +21,8 @@
 #define REV 2
 #define BRAKE 3 
 
-#define OAleft 180 //  left motor PD7
-#define OBright 190 // Right motor PD6
+#define OA_left 180 //  left motor PD7
+#define OB_right 190 // Right motor PD6
 
 void motor_setup(void)
 {
@@ -61,11 +61,12 @@ int motor_set_mode(int setting)
 		right_motor_stop();
 	}
 	
-	if (setting == REV)
+	/*if (setting == REV)
 	{
 		//set in2 high, pulse in1 to turn motors CCW
 	}
 	return 1;
+	*/
 }
 
 /*
@@ -90,32 +91,23 @@ void left_motor_CW()
 void left_motor_CCW()
 {
 	// clear IN1, set IN2
-	OCR2A = OAleft;
+	OCR2A = OA_left;
 	PORTD |= (1<<PD5); // set IN2
 	
 }
-/*
-	L results in pwm
-	PD6 |	PD4	|	Operation
-	-------------------------
-	L	|	L	|	CW
-	-------------------------
-	L	|	H	|	CCW
-	-------------------------
-	H	|	L	|	Brake
-*/
+
 // right motor is IN1 = PD6 & IN2 = PD4
 void right_motor_CW()
 {
 	//PWM IN1 & IN2
 	PORTD &= ~(1<<PD4); // PWM IN1, IN2 to run motor CW
-	
+						// something something need switches?
 }
 
 void right_motor_CCW()
 {
 	// PWM IN1, set IN2
-	OCR2B  = OBright;
+	OCR2B  = OB_right;
 	PORTD |= (1<<PD4); // set IN2
 }
 

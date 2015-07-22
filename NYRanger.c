@@ -9,8 +9,7 @@ Nicholas Cameron
 #include <stdlib.h>
 
 #include<math.h>
-#include "Motor Driver.h"
-//#include "uartmaster.h"
+#include "uartmaster.h"
 #define F_CPU 14745600ul
 #define MAX 400
 #include <util/delay.h>
@@ -57,7 +56,7 @@ double GETRANGE(void)
 	
 }
 void RANGER_ON(int u){
-	//init_uart();
+	init_uart();
 	sei();
 	if (u == 1){
 		DDRB |= (1<<4);	// Set PB 4 as output
