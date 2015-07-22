@@ -25,8 +25,19 @@ int main(void)
 	
 	//Strategy A
 	
+	//leave circle
 	motor_set_mode(FWD);
-	_delay_ms(5000);
+	_delay_ms(650);
+	motor_set_mode(BRAKE);
+	_delay_ms(300);
+	
+	//turn
+	left_motor_CCW();
+	_delay_ms(525);
+	motor_set_mode(BRAKE);
+	
+	motor_set_mode(FWD);
+	_delay_ms(3000);
 	motor_set_mode(BRAKE);
 	
 	

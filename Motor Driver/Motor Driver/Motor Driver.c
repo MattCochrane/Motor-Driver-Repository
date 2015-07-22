@@ -39,7 +39,7 @@ void timersetup(void)
 }
 
 //different modes are required for motors, this function is used to select how to do the different modes
-int motor_set_mode(int setting)
+void motor_set_mode(int setting)
 {
 	if (setting == STOP)
 	{
@@ -92,6 +92,7 @@ void left_motor_CCW()
 {
 	// clear IN1, set IN2
 	OCR2A = OA_left;
+	//PORTD &= ~(1<<PD7); //clear IN1
 	PORTD |= (1<<PD5); // set IN2
 	
 }
@@ -108,6 +109,7 @@ void right_motor_CCW()
 {
 	// PWM IN1, set IN2
 	OCR2B  = OB_right;
+	//PORTD &= ~(1<<PD6); //clear IN1
 	PORTD |= (1<<PD4); // set IN2
 }
 

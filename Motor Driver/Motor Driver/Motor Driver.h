@@ -3,7 +3,7 @@
 #define MOTOR	// MOTOR is just arbitrary word to check for so fns aren't included twice
 
 void motor_setup();
-int motor_set_mode(int val);
+void motor_set_mode(int val);
 
 void timersetup(void);
 
