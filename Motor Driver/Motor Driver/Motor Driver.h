@@ -5,6 +5,8 @@
 void motor_setup();
 int motor_set_mode(int val);
 
+void timersetup(void);
+
 void left_motor_CW();
 void left_motor_CCW();
 void right_motor_CW();
@@ -12,5 +14,8 @@ void right_motor_CCW();
 
 void left_motor_stop();
 void right_motor_stop();
+
+void RANGER_ON(int u);		//Ranger setup
+double GETRANGE(void);
 
 #endif

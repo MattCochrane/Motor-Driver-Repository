@@ -21,13 +21,21 @@
 #define REV 2
 #define BRAKE 3 
 
-
+#define OAleft 180 //  left motor PD7
+#define OBright 190 // Right motor PD6
 
 void motor_setup(void)
 {
-        DDRB |= (1<<PB0)|(1<<PB1)|(1<<PB2)|(1<<PB3);
-		
-		PORTB |= (1<<PB0)|(1<<PB1)|(1<<PB2)|(1<<PB3);
+	
+	DDRD |= (1<<PD6) | (1<<PD7) |(1<<PD4) | (1<<PD5); //output
+	PORTD |= (1<<PD6) | (1<<PD7) | (1<<PD5) | (1<<PD4); // initialize pins high
+}
+
+void timersetup(void)
+{	
+	sei();
+	TCCR2A |= _BV(COM2A0)|_BV(COM2A1)| _BV(WGM20) |_BV(COM2B1)|_BV(COM2B0); //pwm phase correct inverted. Set OC2x on compare match A = 7, B = 6
+	TCCR2B |= (1<<CS21);	// prescale 8
 }
 
 //different modes are required for motors, this function is used to select how to do the different modes
@@ -41,12 +49,16 @@ int motor_set_mode(int setting)
 	
 	if (setting == FWD)
 	{
-		//pulse in1 in2 to turn motors CW
+		//pulse in1 in2 to turn motors CCW
+		left_motor_CCW();
+		right_motor_CCW();
 	}
 	
 	if (setting == BRAKE)
 	{
 		//set in1 high, pulse in2 to brake
+		left_motor_stop();
+		right_motor_stop();
 	}
 	
 	if (setting == REV)
@@ -57,7 +69,34 @@ int motor_set_mode(int setting)
 }
 
 /*
-	IN1	|	IN2	|	Operation
+	
+	PD7 |	PD5	|	Operation
+	-------------------------
+	PWM	|	PWM	|	CW
+	-------------------------
+	PWM	|	H	|	CCW
+	-------------------------
+	H	|	PWM	|	Brake
+	
+*/
+
+// left motor is IN1 = PD7 & IN2 = PD5
+void left_motor_CW() 
+{
+	//PWM IN1 & IN2
+	PORTD &= ~((1<<PD5)|(1<<PD7)); // PWM IN1, IN2 to run motor CW
+}
+
+void left_motor_CCW()
+{
+	// clear IN1, set IN2
+	OCR2A = OAleft;
+	PORTD |= (1<<PD5); // set IN2
+	
+}
+/*
+	L results in pwm
+	PD6 |	PD4	|	Operation
 	-------------------------
 	L	|	L	|	CW
 	-------------------------
@@ -65,105 +104,31 @@ int motor_set_mode(int setting)
 	-------------------------
 	H	|	L	|	Brake
 */
-
-// left motor is IN1 = PB0 & IN2 = PB1
-void left_motor_CW() 
-{
-	//clear IN1 & IN2
-	PORTB &= ~((1<<PB0)|(1<<PB1)); // clear IN1, IN2 to run motor CW
-}
-
-void left_motor_CCW()
-{
-	// clear IN1, set IN2
-	PORTB &= ~(1<<PB0); // clear IN1
-	PORTB |= (1<<PB1); // set IN2
-}
-
-// right motor is IN1 = PB2 & IN2 = PB3
+// right motor is IN1 = PD6 & IN2 = PD4
 void right_motor_CW()
 {
-	//clear IN1 & IN2
-	PORTB &= ~((1<<PB2)|(1<<PB3)); // clear IN1, IN2 to run motor CW
+	//PWM IN1 & IN2
+	PORTD &= ~(1<<PD4); // PWM IN1, IN2 to run motor CW
+	
 }
 
 void right_motor_CCW()
 {
-	// clear IN1, set IN2
-	PORTB &= ~(1<<PB2);	// clear IN1
-	PORTB |= (1<<PB3); // set IN2
+	// PWM IN1, set IN2
+	OCR2B  = OBright;
+	PORTD |= (1<<PD4); // set IN2
 }
 
 void left_motor_stop()
 {
-	//clear IN2, set IN1
-	PORTB &= ~(1<<PB1);
-	PORTB |= (1<<PB0);
+	//PWM IN2, set IN1
+	PORTD &= ~(1<<PD5);
+	OCR2A = 0;
 }
 
 void right_motor_stop()
 {
-	//clear IN2, set IN1
-	PORTB &= ~(1<<PB3);
-	PORTB |= (1<<PB2);
+	//PWM IN2, set IN1
+	PORTD &= ~(1<<PD4);
+	OCR2B = 0;
 }
-
-
-
-
-
-/*		CODE GRAVEYARD
-
-
-
-TIMER SETUP
-
-
-//enable interrupts
-sei();
-
-TIMSK0 |= 1 << TOIE0; // enables overflow
-
-//initialize timer
-TCNT0 = 0;
-TCCR0B |= (1<<CS02); // prescale clk/256 (arbitrary)
-
-// configure timer		normal mode and compare will allow duty cycle adjust
-TCCR0A = 0; // normal mode, overflow flag is set at TCNT0 = 0xFF
-
-//use OCR0A as top to adjust pulse width
-
-//initialize I/O pins
-DDRB |= (1<<0) | (1<<1);// change to DDRC?
-
-// set in1 in2 high so the motors are off
-
-//pulse in1 in2 to turn motors CW
-
-//set in1 high, pulse in2 to brake
-
-//set in2 high, pulse in1 to turn motors CCW
-
-
-ISR
-//create interrupt vector
-// NOTES
-//		keep ISR brief!
-//		any variables modified here that are used in main must be declared volatile
-
-// use overflow and compare isr overflow high, compare low
-ISR(TIMER0_OVF_vect) // occurs when TCNT0 = 0xFF
-{
-	//this interrupt will set PB0 and PB1 high to start pulse
-	
-	PORTB |= (1<<PB0) | (1<<PB1);
-	
-	//reset timer?
-}
-
-ISR(TIMER0_COMPA_vect) // occurs when TCNT0 = OCR0A
-{
-	//this interrupt will be used to set PB0 & PB1 low again to end the pulse
-	PORTB &=  ~((1<<PB0) | (1<<PB1));
-}
-*/
